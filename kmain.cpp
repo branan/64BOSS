@@ -28,9 +28,6 @@ uint8 acpi_revision;
 bool parse_multiboot_tag(const char** list) {
     const char* addr = *list;
     const multiboot_tag* tag = (multiboot_tag*)addr;
-    earlyprint("Got Tag: ");
-    earlyprint(tag->type);
-    earlyprint("\n");
     switch(tag->type) {
         case MULTIBOOT_TAG_TYPE_END:
             return false;
@@ -182,7 +179,6 @@ extern "C" void kmain() {
         earlyprint(multiboot_cmdline);
         earlyprint("\n");
     }
-    page_allocator.printDebugInfo();
     
     // At this point, memory allocation is set up, and we have a sane kernel page mapping
     // Remaining core kernel services need to be initialized, then the boot modules can be loaded.

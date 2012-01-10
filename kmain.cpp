@@ -1,6 +1,7 @@
 #include "multiboot2.h"
 #include "earlyprint.h"
 
+#include "memallocator.h"
 #include "pageallocator.h"
 #include "pagemapper.h"
 #include "kutils.h"
@@ -62,7 +63,7 @@ bool parse_multiboot_tag(const char** list) {
                     uint32 type = entry->type;
                     
                     if(type == MULTIBOOT_MEMORY_AVAILABLE)
-                        page_allocator.addPageRange(entry->addr, entry->addr+entry->len);
+                        PageAllocator::addPageRange(entry->addr, entry->addr+entry->len);
                     // TODO: Tag ACPI reclaimable ranges to be reclaimed once ACPI has been parsed
                 }
             }
@@ -127,11 +128,8 @@ extern "C" void kinit( unsigned long magic, void* mbd ) {
         return;
     }
 
-    uint64* ctor_list = &start_ctors;
-    while(ctor_list != &end_ctors) {
-        ((ctor)*ctor_list)();
-        ctor_list++;
-    }
+    MemAllocator::init();
+    PageAllocator::init();
 
     num_boot_modules = 0;
 
@@ -141,7 +139,7 @@ extern "C" void kinit( unsigned long magic, void* mbd ) {
     tag+=8; // skip the total size info
     while(tag < multiboot_end && parse_multiboot_tag(&tag)) {};
 
-    page_allocator.reservePageRange((uint64)&kernel_start, (uint64)&kernel_end);
+    PageAllocator::reservePageRange((uint64)&kernel_start, (uint64)&kernel_end);
 
     for(uint8 i = 0; i < num_boot_modules; i++) {
         uint32 start = boot_modules[i].start & 0xfffff000;
@@ -150,7 +148,7 @@ extern "C" void kinit( unsigned long magic, void* mbd ) {
             end += 0x1000;
             end = end & 0xfffff000;
         }
-        page_allocator.reservePageRange(start, end);
+        PageAllocator::reservePageRange(start, end);
     }
     PageMapper::buildDefaultMapping();
 }
@@ -182,6 +180,13 @@ extern "C" void kmain() {
     
     // At this point, memory allocation is set up, and we have a sane kernel page mapping
     // Remaining core kernel services need to be initialized, then the boot modules can be loaded.
+
+    // static kernel modules are initialized through static constructors
+    uint64* ctor_list = &start_ctors;
+    while(ctor_list != &end_ctors) {
+        ((ctor)*ctor_list)();
+        ctor_list++;
+    }
     
     // TODO: Parse the kernel command line
     // TODO: Initialize remaining services

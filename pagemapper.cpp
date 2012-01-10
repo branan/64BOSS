@@ -89,40 +89,40 @@ extern char bootheap_start;
 // want to /UNMAP/ sections of the first 2MB that we
 // aren't using.
 void PageMapper::buildDefaultMapping() {
-    uint64 heap_pml3 = page_allocator.requestPage();
+    uint64 heap_pml3 = PageAllocator::requestPage();
     pml4[0x102] = heap_pml3 | 0x03;
     invlpg(pml3(heap_addr));
 
-    uint64 heap_pml2 = page_allocator.requestPage();
+    uint64 heap_pml2 = PageAllocator::requestPage();
     pml3(heap_addr)[0] = heap_pml2 | 0x03;
     invlpg(pml2(heap_addr));
 
-    uint64 heap_pml1 = page_allocator.requestPage();
+    uint64 heap_pml1 = PageAllocator::requestPage();
     pml2(heap_addr)[0] = heap_pml1 | 0x03;
     invlpg(pml1(heap_addr));
 
     for(int i = 0; i < 4; i++) {
-        pml1(heap_addr)[i] = page_allocator.requestPage() | 0x03;
+        pml1(heap_addr)[i] = PageAllocator::requestPage() | 0x03;
         invlpg((void*)(heap_addr + 0x1000 * i));
     }
     memcpy((void*)heap_addr, &bootheap_start, 0x4000);
 
-    uint64 stack_pml2 = page_allocator.requestPage();
+    uint64 stack_pml2 = PageAllocator::requestPage();
     pml3(stack_addr)[pml3_entry(stack_addr)] = stack_pml2 | 0x03;
     invlpg(pml2(stack_addr));
 
-    uint64 stack_pml1 = page_allocator.requestPage();
+    uint64 stack_pml1 = PageAllocator::requestPage();
     pml2(stack_addr)[pml2_entry(stack_addr)] = stack_pml1 | 0x03;
     invlpg(pml1(stack_addr));
 
     for(int i = 0; i < 4; i++) {
         uint64 addr = stack_addr + i * 0x1000;
-        pml1(stack_addr)[pml1_entry(addr)] = page_allocator.requestPage() | 0x03;
+        pml1(stack_addr)[pml1_entry(addr)] = PageAllocator::requestPage() | 0x03;
         invlpg((void*)addr);
     }
 
-    mem_allocator.fixup();
-    page_allocator.fixup();
+    MemAllocator::fixup();
+    PageAllocator::fixup();
 }
 
 void PageMapper::removeBootPages() {
@@ -133,7 +133,7 @@ void PageMapper::removeBootPages() {
         pml1(addr)[pml1_entry(addr)] = 0x0;
         invlpg((void*)addr);
     }
-    page_allocator.addPageRange((uint64)&bootheap_start-0xffffffff80000000, ((uint64)&bootheap_start)+0x8000-0xffffffff80000000);
+    PageAllocator::addPageRange((uint64)&bootheap_start-0xffffffff80000000, ((uint64)&bootheap_start)+0x8000-0xffffffff80000000);
 
     // The high mapping does not need the video memory and whatnot. Unmap the entire low megabyte from the kernel map.
     for(int i = 0; i < 256; i++) {
@@ -144,10 +144,10 @@ void PageMapper::removeBootPages() {
     // TODO: figure out how to get rid of any extra mapped pages at the end of the kernel
 
     // Lastly, we create a new low mapping for video memory
-    uint64 vid_pml2 = page_allocator.requestPage();
+    uint64 vid_pml2 = PageAllocator::requestPage();
     pml3(0xb8000)[pml3_entry(0xb8000)] = vid_pml2 | 0x03;
     invlpg(pml2(0xb8000));
-    uint64 vid_pml1 = page_allocator.requestPage();
+    uint64 vid_pml1 = PageAllocator::requestPage();
     pml2(0xb8000)[pml2_entry(0xb8000)] = vid_pml1 | 0x03;
     invlpg(pml1(0xb8000));
     pml1(0xb8000)[pml1_entry(0xb8000)] = 0xb8003;

@@ -3,7 +3,8 @@
 
 #define MALLOC_TAG 0x00CAFEF00DBEEF00
 
-struct MemAllocator::FreeEntry {
+namespace MemAllocator {
+struct FreeEntry {
     uint64 size;
     FreeEntry* next;
 };
@@ -13,9 +14,13 @@ struct MallocHeader {
     uint64 tag;
 };
 
+FreeEntry *free_list;
+uint64 heap_end;
+}
+
 extern MemAllocator::FreeEntry bootheap_start;
 
-MemAllocator::MemAllocator()
+void MemAllocator::init()
 {
     bootheap_start.size = 0x4000;
     bootheap_start.next = 0;
@@ -183,24 +188,22 @@ void MemAllocator::fixup() {
     }
 }
 
-MemAllocator mem_allocator;
-
 void *operator new(uint64 size)
 {
-    return mem_allocator.alloc(size);
+    return MemAllocator::alloc(size);
 }
  
 void *operator new[](uint64 size)
 {
-    return mem_allocator.alloc(size);
+    return MemAllocator::alloc(size);
 }
   
 void operator delete(void *p)
 {
-    mem_allocator.dealloc(p);
+    MemAllocator::dealloc(p);
 }
    
 void operator delete[](void *p)
 {
-    mem_allocator.dealloc(p);
+    MemAllocator::dealloc(p);
 }

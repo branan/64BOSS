@@ -4,16 +4,19 @@
 
 #include "earlyprint.h"
 
-struct PageAllocator::Entry {
+namespace PageAllocator {
+struct Entry {
     uint64 start;
     uint64 end;
     Entry* next;
 };
 
-PageAllocator page_allocator;
+Entry* head;
+}
 
-PageAllocator::PageAllocator()
- : head(0) {}
+void PageAllocator::init() {
+    head = 0;
+}
  
 uint64 PageAllocator::requestPage() {
     uint64 result = head->start;

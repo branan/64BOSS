@@ -3,8 +3,7 @@
 
 #include "ktypes.h"
 
-class PageAllocator {
-public:
+namespace PageAllocator {
     uint64 requestPage();
     uint64 requestBigPage();
 
@@ -21,12 +20,7 @@ public:
 
     void printDebugInfo();
 
-    PageAllocator();
-private:
-    struct Entry;
-    Entry* head;
+    void init();
 };
-
-extern PageAllocator page_allocator;
 
 #endif // PAGEALLOCATOR_H

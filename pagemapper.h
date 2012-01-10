@@ -3,17 +3,16 @@
 
 #include "ktypes.h"
 
-class PageMapper {
-public:
-    static void mapPages(uint64, uint64);
-    static void unmapPages(uint64, uint64);
+namespace PageMapper {
+    void mapPages(uint64, uint64);
+    void unmapPages(uint64, uint64);
 
     // returns the physical address of the new PML4
-    static uint64 forkMapping();
-    static void buildDefaultMapping();
-    static void removeBootPages();
+    uint64 forkMapping();
+    void buildDefaultMapping();
+    void removeBootPages();
 
-    static void* fixupHeap(const void*);
+    void* fixupHeap(const void*);
 };
 
 #endif // PAGEMAPPER_H

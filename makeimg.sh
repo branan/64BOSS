@@ -27,7 +27,7 @@ function prereq() {
  
 # check prerequisites
 prereq x /sbin/mkfs.ext2
-prereq x /sbin/grub-install
+prereq x /home/branan/prefix/grub/sbin/grub-install
  
 # create image
 dd if=/dev/zero of="$harddisk_image" bs=4k count=$((harddisk_image_size/4096)) 2>/dev/null
@@ -57,7 +57,7 @@ sudo mkdir -p ./mnt/boot/grub || fail "could not create boot directory"
 
 sudo cp ./kernel ./mnt/boot/kernel || fail "could not copy kernel installation"
 
-sudo /home/branan/prefix/grub2/sbin/grub-install --modules='ext2 part_msdos' --boot-directory=./mnt/boot /dev/loop1 || fail "could not install grub"
+sudo /home/branan/prefix/grub/sbin/grub-install --no-floppy --modules='ext2 part_msdos' --boot-directory=./mnt/boot /dev/loop1 || fail "could not install grub"
 
 sudo bash -c 'cat > ./mnt/boot/grub/grub.cfg' <<END_MENUCFG
 set default = '0'

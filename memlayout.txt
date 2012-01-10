@@ -1,0 +1,20 @@
+We use a 4-layer page table. All divisions between user/kernel space happen at the highest level table.
+
+0x000 User Space
+ ...
+0x0FF User Space
+0x100 Active PML4 self-mapping
+0x101 Secondary PML4 mapping for forking/initialization
+0x102 Kernel Heap
+ ...
+0x1FE Kernel Heap
+0x1FF Kernel Heap/Static
+
+The last page is split between heap/Static. It's layout:
+0x000 Kernel Heap
+ ...
+0x1FD Kernel Heap
+0x1FE Kernel Static
+0x1FF Kernel Static
+
+That is, the highest 2GB are mapped to kernel static code/data.

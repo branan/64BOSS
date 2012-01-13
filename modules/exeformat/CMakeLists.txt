@@ -1,0 +1,5 @@
+set(MODULE_ELF64_SRCS
+    elf64.cpp
+)
+
+add_module(elf64 DEFAULT_ENABLE DEFAULT_BUILTIN ${MODULE_ELF64_SRCS})

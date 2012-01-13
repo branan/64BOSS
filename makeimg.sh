@@ -60,11 +60,11 @@ sudo cp ./kernel ./mnt/boot/kernel || fail "could not copy kernel installation"
 sudo /home/branan/prefix/grub/sbin/grub-install --no-floppy --modules='ext2 part_msdos' --boot-directory=./mnt/boot /dev/loop1 || fail "could not install grub"
 
 sudo bash -c 'cat > ./mnt/boot/grub/grub.cfg' <<END_MENUCFG
-set default = '0'
+set default = 0
 set timeout = 2
 menuentry '64BOSS' {
     set root='(hd0,1)'
-    multiboot2 /boot/kernel
+    multiboot2 /boot/kernel --root=(hd0,1)
 }
 END_MENUCFG
 

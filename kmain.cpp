@@ -187,7 +187,7 @@ extern "C" void kmain() {
         ((ctor)*ctor_list)();
         ctor_list++;
     }
-    
+
     // TODO: Parse the kernel command line
     // TODO: Initialize remaining services
     // TODO: load boot-time modules

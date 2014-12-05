@@ -29,6 +29,8 @@ mbhdr_start:
 .long 12
 .long loader
 
+.align 8
+
 # re-enable this once there's an FB console
 #.long 5
 #.long 20
@@ -36,9 +38,13 @@ mbhdr_start:
 #.long 0
 #.long 24
 
+.align 8
+
 .short 6
 .short 0
 .long 8
+
+.align 8
 
 .long 0
 .long 8

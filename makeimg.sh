@@ -4,13 +4,10 @@
 # kernels.
  
 # ---- begin config params ----
- 
-harddisk_image_size=$((16*128*4*512)) # however the hell big this is
+
+harddisk_image_size=$((128*128*4*512)) # 32MB
 harddisk_image="harddisk.img"
-qemu_cmdline="qemu -monitor stdio"
-kernel_args=""
-kernel_binary="kernel.bin"
- 
+
 # ----  end config params  ----
  
  
@@ -27,7 +24,7 @@ function prereq() {
  
 # check prerequisites
 prereq x /sbin/mkfs.ext2
-prereq x /home/branan/prefix/grub/sbin/grub-install
+prereq x /sbin/grub-install
  
 # create image
 dd if=/dev/zero of="$harddisk_image" bs=4k count=$((harddisk_image_size/4096)) 2>/dev/null
@@ -36,8 +33,8 @@ dd if=/dev/zero of="$harddisk_image" bs=4k count=$((harddisk_image_size/4096)) 2
 sudo /sbin/losetup /dev/loop1 "$harddisk_image" || fail "could not loop-mount harddisk.img"
 
 # partition the image
-sudo /sbin/sfdisk -S16 -H128 -C4 -uS /dev/loop1 <<END_PARTITION
-256 7936
+sudo /sbin/sfdisk -S16 -H1 -uS /dev/loop1 <<END_PARTITION
+256 65280
 0 0
 0 0
 0 0
@@ -57,7 +54,11 @@ sudo mkdir -p ./mnt/boot/grub || fail "could not create boot directory"
 
 sudo cp ./kernel ./mnt/boot/kernel || fail "could not copy kernel installation"
 
-sudo /home/branan/prefix/grub/sbin/grub-install --no-floppy --modules='ext2 part_msdos' --boot-directory=./mnt/boot /dev/loop1 || fail "could not install grub"
+sudo mkdir ./mnt/boot/grub/fonts || fail "could not create fonts directory"
+
+sudo cp /usr/share/grub/unicode.pf2 ./mnt/boot/grub/fonts/unicode.pf2 || fail "could not copy grub font to image"
+
+sudo /sbin/grub-install --force --target=i386-pc --no-floppy --modules='ext2 part_msdos' --boot-directory=./mnt/boot /dev/loop1 || fail "could not install grub"
 
 sudo bash -c 'cat > ./mnt/boot/grub/grub.cfg' <<END_MENUCFG
 set default = 0

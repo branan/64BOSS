@@ -33,7 +33,7 @@ set_target_properties(kernel PROPERTIES
 message(STATUS var in root: ${64BOSS_BUILTIN_MODULES})
 target_link_libraries(kernel ${64BOSS_BUILTIN_MODULES})
 
-add_custom_target(harddisk.img
+add_custom_command(OUTPUT harddisk.img
     COMMAND ${CMAKE_SOURCE_DIR}/makeimg.sh
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     DEPENDS kernel

@@ -30,7 +30,6 @@ add_executable(kernel ${kernel_SRCS} kernel.ld)
 set_target_properties(kernel PROPERTIES
     LINK_FLAGS "-m64 -T${CMAKE_SOURCE_DIR}/kernel.ld -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -z max-page-size=0x1000 -Wl,-whole-archive"
     COMPILE_FLAGS "-m64 -fno-builtin -fno-exceptions -fno-rtti -nostdlib -mcmodel=kernel")
-message(STATUS var in root: ${64BOSS_BUILTIN_MODULES})
 target_link_libraries(kernel ${64BOSS_BUILTIN_MODULES})
 
 add_custom_command(OUTPUT harddisk.img

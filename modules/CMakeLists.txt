@@ -40,7 +40,5 @@ endmacro(add_module)
 include_directories(${CMAKE_SOURCE_DIR}/modules)
 
 add_subdirectory(exeformat)
-message(STATUS Var in modules: ${64BOSS_BUILTIN_MODULES})
-# We need to push this variable all the way up to the 
-# main kernel
+
 set(64BOSS_BUILTIN_MODULES ${64BOSS_BUILTIN_MODULES} PARENT_SCOPE)

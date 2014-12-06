@@ -18,21 +18,24 @@ mbhdr_start:
 .long MBSIZE
 .long CHECKSUM
 
-.long 2
+.short 2
+.short 0
 .long 24
 .long mbhdr_start
 .long loader
 .long (edata - KERNEL_VMA_BASE)
 .long (bootheap_end - KERNEL_VMA_BASE)
 
-.long 3
+.short 3
+.short 0
 .long 12
 .long loader
 
 .align 8
 
 # re-enable this once there's an FB console
-#.long 5
+#.short 5
+#.short 0
 #.long 20
 #.long 0
 #.long 0
@@ -46,7 +49,8 @@ mbhdr_start:
 
 .align 8
 
-.long 0
+.short 0
+.short 0
 .long 8
 mbhdr_end:
 

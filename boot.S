@@ -7,7 +7,7 @@
 .set DS_USER, 0x20	
 
 start64:
-    movq $(bootheap_end - KERNEL_VMA_BASE), %rsp
+    movq $(bootheap_end), %rsp
 
     mov $DS_KERNEL, %ax
     mov %ax, %ss
@@ -16,14 +16,6 @@ start64:
     mov %ax, %fs
     mov %ax, %gs
 	
-    movq $long_entry, %rax
-    pushq $CS_KERNEL
-    pushq $long_entry
-    lretq
-
-long_entry:
-    movq $(bootheap_end), %rsp
-
     # Load the address of the syscall entrypoint into edx:eax
     movq $SysCall, %rax
     movq %rax, %rdx

@@ -24,8 +24,8 @@ start64:
     movq $0xC0000082, %rcx
     wrmsr
     # Load our segments into edx:eax
-    movq $0, %rax
-    movq $0x1808, %rdx
+    mov $0, %eax
+    mov $0x00180008, %edx
     #Push those segments into IA32_STAR
     movq $0xC0000081, %rcx
     wrmsr

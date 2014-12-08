@@ -96,8 +96,8 @@ GDT_START:
     .quad   0x00af9a000000ffff      # Kernel CS
     .quad   0x00cf92000000ffff      # Kernel DS
     .quad   0x0000000000000000      # User 32-bit CS (unused)	
-    .quad   0x0000000000000000      # User DS
-    .quad   0x0000000000000000      # User CS
+    .quad   0x00cff2000000ffff      # User DS
+    .quad   0x00affa000000ffff      # User CS
 GDT_END:
 
     .word 0 # padding

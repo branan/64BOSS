@@ -3,11 +3,19 @@
 .set KERNEL_VMA_BASE, 0xffffffff80000000
 .set KERNEL_LMA_BASE, 0x100000
 .set CS_KERNEL, 0x08
-.set CS_DATA, 0x10
+.set DS_KERNEL, 0x10
+.set DS_USER, 0x20	
 
 start64:
     movq $(bootheap_end - KERNEL_VMA_BASE), %rsp
 
+    mov $DS_KERNEL, %ax
+    mov %ax, %ss
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+	
     movq $long_entry, %rax
     pushq $CS_KERNEL
     pushq $long_entry
@@ -25,7 +33,7 @@ long_entry:
     wrmsr
     # Load our segments into edx:eax
     movq $0, %rax
-    movq $0x1008, %rdx
+    movq $0x1808, %rdx
     #Push those segments into IA32_STAR
     movq $0xC0000081, %rcx
     wrmsr
@@ -42,6 +50,15 @@ long_entry:
 SysCall:
     cmp %rax, (numsyscalls)
     jge SysCallCancel
+
+    # setup segments for kernel mode
+    mov $DS_KERNEL, %ax
+    mov %ax, %ss
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+	
     mov %rsp, %r11
     mov $KERNEL_VMA_BASE, %rsp
     push %r11
@@ -51,6 +68,15 @@ SysCall:
     call *(%r11, %rax, 8)
     pop %rcx
     pop %rsp
+
+    # setup segments for user mode
+    mov $DS_USER, %ax
+    mov %ax, %ss
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+
     sysret
 
 SysCallCancel:

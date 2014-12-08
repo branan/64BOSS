@@ -25,7 +25,7 @@ macro(add_module MODNAME)
                 COMPILE_FLAGS "-m64 -fno-builtin -fno-exceptions -fno-rtti -nostdlib -mcmodel=kernel"
                 COMPILE_DEFINITIONS MODULE_BUILTIN)
             set(64BOSS_BUILTIN_MODULES ${64BOSS_BUILTIN_MODULES} ${MODNAME} PARENT_SCOPE)
-        else(BUILDTIN_${MODNAME})
+        else(BUILTIN_${MODNAME})
             add_library(${MODNAME} SHARED ${MODULE_SRCS})
             set_target_properties(${MODNAME} PROPERTIES
                 LINK_FLAGS "-fPIC -m64 -T${CMAKE_SOURCE_DIR}/module.ld -nostdlib -nostartfiles -nodefaultlibs -z max-page-size=0x1000"

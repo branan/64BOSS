@@ -90,13 +90,12 @@ loader:
     ljmp $CS_KERNEL, $(start64-KERNEL_VMA_BASE)
 
 # GDT and IDT
-# User CS and DS are backwards from the kernel because SYSRET is stupid
-# and assumes descriptors in C-32, D, C-64 order.
 .align 4096
 GDT_START:
     .quad   0x0000000000000000      # NULL descriptor
     .quad   0x00af9a000000ffff      # Kernel CS
     .quad   0x00cf92000000ffff      # Kernel DS
+    .quad   0x0000000000000000      # User 32-bit CS (unused)	
     .quad   0x0000000000000000      # User DS
     .quad   0x0000000000000000      # User CS
 GDT_END:
